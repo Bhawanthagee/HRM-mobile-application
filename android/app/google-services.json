@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "1037489030468",
+    "project_id": "final-project-hrm",
+    "storage_bucket": "final-project-hrm.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1037489030468:android:19e0d263d2127de3b80311",
+        "android_client_info": {
+          "package_name": "com.bawantha.login_ui"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1037489030468-49neh501s8cmedturgf541oadncg0fd6.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBlVYC7xcZbM-OfKY9co5QXQiheyPUNO4k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1037489030468-49neh501s8cmedturgf541oadncg0fd6.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
