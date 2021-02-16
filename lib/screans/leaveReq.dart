@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:login_ui/leaveSubScreens/casualLeavesSubmission.dart';
 import 'package:login_ui/leaveSubScreens/dutyLeave.dart';
 import 'package:login_ui/leaveSubScreens/medicalLeave.dart';
-import 'package:login_ui/leave_events/halfDay.dart';
+
 import 'package:login_ui/leave_events/short_Leave_event.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
-//User loggedInUSer;
 class LeaveRequest extends StatefulWidget {
   @override
   _LeaveRequestState createState() => _LeaveRequestState();
@@ -20,48 +20,31 @@ class _LeaveRequestState extends State<LeaveRequest> {
 
   double remainingLeaveCount,percentage=0.0;
   FirebaseFirestore _fireStore = FirebaseFirestore.instance;
-  final _auth = FirebaseAuth.instance;
   final dbRef = FirebaseDatabase.instance.reference();
   bool showSpinner = false;
+  final _auth = FirebaseAuth.instance;
 
   @override
   void initState() {
     super.initState();
 
-    //getCurrentUser();
+    getCurrentUser();
     setState(() {
       remainingLeaveCounter();
     });
   }
-  // void getCurrentUser()async{
-  //   try{
-  //     final user = await _auth.currentUser;
-  //     if(user!=null){
-  //       loggedInUSer = user;
-  //       print(loggedInUSer.email);
-  //     }}
-  //   catch(e){
-  //     print(e);
-  //   }
-  // }
-  // void remainingLeaveCounter()async{
-  //
-  //   try{
-  //     DocumentSnapshot variable = await _fireStore.collection('Leave counter').doc(loggedInUSer.email).get();
-  //     String v = variable['remaining leaves'].toString();
-  //     remainingLeaveCount = double.parse(v);
-  //     percentage = remainingLeaveCount/4*.1;
-  //     setState(() {
-  //
-  //     });
-  //
-  //     print( percentage);
-  //   }
-  //   catch(e){
-  //     print(e);
-  //   }
-  // }
-
+  void getCurrentUser()async{
+    try{
+      final user = _auth.currentUser;
+      if(user!=null){
+        loggedInUSer = user ;
+        print(loggedInUSer.email);
+        print(loggedInUSer.uid);
+      }}
+    catch(e){
+      print(e);
+    }
+  }
   void remainingLeaveCounter()async{
     try{
       DocumentSnapshot variable = await _fireStore.collection('Leave counter').doc(loggedInUSer.email).get();

@@ -1,15 +1,9 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_form_builder/flutter_form_builder.dart';
 import 'package:intl/intl.dart';
 import 'package:login_ui/screans/googleNav.dart';
 import 'package:login_ui/screans/home.dart';
-import 'package:login_ui/screans/leaveReq.dart';
-import 'package:login_ui/classes/loggedInUser.dart';
-import '';
-
-//User loggedInUSer;
 
 class CasualLeaveEvent extends StatefulWidget {
 
@@ -24,32 +18,15 @@ class CasualLeaveEvent extends StatefulWidget {
 class _CasualLeaveEventState extends State<CasualLeaveEvent> {
 
 
-
-   String reasonTxt;
+  String reasonTxt;
    String descriptionTxt;
    bool showSpinner = false;
-   final _auth = FirebaseAuth.instance;
    final _fireStore = FirebaseFirestore.instance;
    final _formKey = GlobalKey<FormState>();
 
-   @override
-   void initState() {
-     super.initState();
-     // getCurrentUser();
-     print(loggedInUSer);
-    }
 
-   // void getCurrentUser()async{
-   //   try{
-   //     final user = await _auth.currentUser;
-   //     if(user!=null){
-   //       loggedInUSer = user;
-   //       print(loggedInUSer.email);
-   //     }}
-   //   catch(e){
-   //     print(e);
-   //   }
-   // }
+
+
 
 
 
@@ -170,9 +147,10 @@ class _CasualLeaveEventState extends State<CasualLeaveEvent> {
                           String formattedDateIn = DateFormat(' dd-M-yyyy').format(date);
                           print(date);
                         try{
-                          _fireStore.collection('leaves').doc('casual').collection(loggedInUSer.email).doc(formattedDateIn).set({
+                          _fireStore.collection('leaves').doc('casual').collection(loggedInUSer.email).doc().set({
                             "description": descriptionTxt,
-                            "reason" :reasonTxt
+                            "reason" :reasonTxt,
+                            'date' :formattedDateIn
                           });
                           DocumentSnapshot variable = await _fireStore.collection('Leave counter').doc(loggedInUSer.email).get();
 

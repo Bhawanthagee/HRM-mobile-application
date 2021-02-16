@@ -1,10 +1,16 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:intl/intl.dart';
+
+import 'home.dart';
 
 
-User loggedInUSer;
+
+final _fireStore = FirebaseFirestore.instance;
+Future<void> deleteProduct(DocumentSnapshot doc) async {
+  await _fireStore.collection("leaves").doc("casual").collection(loggedInUSer.email).doc().delete();
+}
+
 
 class CasualLeaveListPage extends StatefulWidget {
   @override
@@ -13,34 +19,9 @@ class CasualLeaveListPage extends StatefulWidget {
 
 class _CasualLeaveListPageState extends State<CasualLeaveListPage> {
 
-
-
-  final _auth = FirebaseAuth.instance;
   final _fireStore = FirebaseFirestore.instance;
 
 
-
-  @override
-  void initState() {
-    super.initState();
-    setState(() {
-      getCurrentUser();
-    });
-
-
-  }
-
-  void getCurrentUser()async{
-    try{
-      final user = await _auth.currentUser;
-      if(user!=null){
-        loggedInUSer = user;
-        print(loggedInUSer.email);
-      }}
-    catch(e){
-      print(e);
-    }
-  }
 
 
   @override
@@ -69,7 +50,9 @@ class _CasualLeaveListPageState extends State<CasualLeaveListPage> {
 
 class LeaveItems extends StatefulWidget {
   final String date;
-  LeaveItems({this.date});
+  final String reason;
+  final DocumentSnapshot documentSnapshot;
+  LeaveItems({this.date, this.documentSnapshot,this.reason});
 
   @override
   _LeaveItemsState createState() => _LeaveItemsState();
@@ -78,10 +61,32 @@ class LeaveItems extends StatefulWidget {
 class _LeaveItemsState extends State<LeaveItems> {
   @override
   Widget build(BuildContext context) {
-    return  Container(
-      height: 100,
-      width: 150,
-      child: Text(widget.date)
+    return  Row(
+      children: [
+        Row(
+          children: [
+            Container(
+              height: 100,
+              width: 150,
+              child: Text(widget.date),
+            ),
+            // Container(
+            //   height: 100,
+            //   width: 150,
+            //   child: Text(widget.reason),
+            // ),
+          ],
+        ),
+        IconButton(
+          onPressed: () {
+            deleteProduct(widget.documentSnapshot);
+          },
+          icon: Icon(
+            Icons.delete,
+            color: Colors.redAccent,
+          ),
+        ),
+      ],
     );
   }
 }
