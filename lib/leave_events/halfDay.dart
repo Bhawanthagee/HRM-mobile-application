@@ -1,5 +1,11 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:login_ui/custom items/constants.dart';
+import 'package:login_ui/leaveSubScreens/dutyLeave.dart';
+import 'package:login_ui/screans/googleNav.dart';
+
+
 
 
 
@@ -7,6 +13,7 @@ class HalfDayEvent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final _fireStore = FirebaseFirestore.instance;
 
 
     DateTime timeNow = DateTime.now();
@@ -29,9 +36,31 @@ class HalfDayEvent extends StatelessWidget {
                     Text(' ${timeNow.year} / ${timeNow.month} / ${timeNow.day}',style: Constants.timeAndDateTxt,),
                     Text(' ${timeNow.hour} : ${timeNow.minute} ',style: Constants.DateTxt,),
                     SizedBox(height: 35,),
-                    RaisedButton(onPressed: () {
-                      Navigator.pop(context);
-                      print(timeNow);
+                    RaisedButton(onPressed: () async{
+                      DateTime date =timeNow;
+                      String formattedDateIn = DateFormat('dd-M-yyyy').format(date);
+                      String formattedTime = DateFormat('hh:mm ').format(date);
+                      print(date);
+                      Navigator.push(context,MaterialPageRoute(builder:(context)=>MyHomePage()));
+                      print(formattedDateIn);
+                      print(formattedTime);
+
+                      try{
+                        _fireStore.collection('leaves').doc('Half Day').collection(loggedInUSer.email).doc().set({
+                          'date' :formattedDateIn,
+                          'time' :formattedTime,
+                        });
+                        DocumentSnapshot variable = await _fireStore.collection('Leave counter').doc(loggedInUSer.email).get();
+
+                        String v = variable['remaining leaves'].toString();
+                        var l = double.parse(v);
+                        l=l-0.5;
+                        _fireStore.collection('Leave counter').doc(loggedInUSer.email).set({
+                          "remaining leaves" : l
+                        });
+                      }catch(e){
+
+                      }
                     },
                       color: Colors.blueAccent,
                       child: Text('Submit', style: TextStyle(color: Colors.white),),

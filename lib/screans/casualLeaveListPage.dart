@@ -1,7 +1,6 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter/material.dart';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/material.dart';
 import 'home.dart';
 
 
@@ -34,10 +33,13 @@ class _CasualLeaveListPageState extends State<CasualLeaveListPage> {
             itemCount: snapshot.data.docs.length,
             itemBuilder: (context, index) {
               DocumentSnapshot data = snapshot.data.docs[index];
-              return LeaveItems(
-                //documentSnapshot: data,
 
+              return LeaveItems(
+
+                documentSnapshot: data,
                 date: data['date'],
+                reason:data['reason'],
+
 
               );
             },
@@ -63,20 +65,29 @@ class _LeaveItemsState extends State<LeaveItems> {
   Widget build(BuildContext context) {
     return  Row(
       children: [
-        Row(
-          children: [
-            Container(
-              height: 100,
-              width: 150,
-              child: Text(widget.date),
-            ),
-            // Container(
-            //   height: 100,
-            //   width: 150,
-            //   child: Text(widget.reason),
-            // ),
-          ],
-        ),
+         Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(top:30.0),
+                child: Container(
+
+                  height: 100,
+                  width: 150,
+                  child: Text(widget.date),
+                ),
+              ),
+              Padding(
+                padding: const EdgeInsets.only(top:30.0),
+                child: Container(
+                  height: 100,
+                  width: 150,
+                  child: Text(widget.reason),
+                ),
+              ),
+
+            ],
+          ),
+
         IconButton(
           onPressed: () {
             deleteProduct(widget.documentSnapshot);

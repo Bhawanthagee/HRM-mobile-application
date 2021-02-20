@@ -136,15 +136,16 @@ class _LoginState extends State<Login> {
                           child: FlatButton(
                             onPressed: () async {
                               if (_key.currentState.validate()) {
-                                setState(() {
+                               if(mounted){ setState(() {
                                   showSpinner = true;
-                                });
+                                });}
 
                                 try {
                                   final user =
                                   await _auth.signInWithEmailAndPassword(
                                       email: email, password: password);
                                   if (user != null) {
+                                    Navigator.pop(context);
                                     Navigator.push(
                                         context,
                                         MaterialPageRoute(
@@ -152,26 +153,32 @@ class _LoginState extends State<Login> {
                                                 MyHomePage()));
                                     //Navigator.pop(context);
                                   }
-                                  setState(() {
-                                    showSpinner = false;
-                                  });
+                                  if(this.mounted){
+                                    setState(() {
+                                      showSpinner = false;
+                                    });
+                                  }
                                 } on FirebaseAuthException catch (e) {
                                  if(e.code == 'user-not-found' || e.code == 'invalid-email'){
                                    showDialog(context: context,
                                        builder: (BuildContext context){
                                          return LoginErrorDialogEmail();
                                        });
-                                   setState(() {
-                                     showSpinner = false;
-                                   });
+                                   if(this.mounted){
+                                     setState(() {
+                                       showSpinner = false;
+                                     });
+                                   }
                                  } else if(e.code == 'wrong-password'){
                                    showDialog(context: context,
                                        builder: (BuildContext context){
                                          return LoginErrorDialogPassword();
                                        });
+                                   if(mounted){
                                    setState(() {
                                      showSpinner = false;
                                    });
+                                   }
                                  }
                                  // else if(e.code == 'invalid-email'){
                                  //   showDialog(context: context,

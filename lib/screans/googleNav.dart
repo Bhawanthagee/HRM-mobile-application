@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:google_nav_bar/google_nav_bar.dart';
 import 'package:line_icons/line_icons.dart';
 import 'package:login_ui/screans/home.dart';
+import 'package:login_ui/screans/userProfile.dart';
 import 'leaveReq.dart';
 import 'chaScreen.dart';
 
@@ -26,11 +27,11 @@ class _MyHomePageState extends State<MyHomePage> {
     Colors.teal
   ];
 
-  List<Widget> text = [
+  List<Widget> pages = [
     Home(),
-
     LeaveRequest(),
     ChatScreen(),
+    UserProfile(),
 
   ];
   PageController controller = PageController();
@@ -48,17 +49,17 @@ class _MyHomePageState extends State<MyHomePage> {
         //   backgroundColor: Colors.white,
         // ),
         body:PageView.builder(
-            itemCount: 4,
+            itemCount:4,
             controller: controller,
             onPageChanged: (page){
-              setState(() {
+             if(this.mounted){ setState(() {
                 _index= page;
-              });
+              });}
             },
             itemBuilder:(context,position){
               return Container(
                 color: colors[position],
-                child:Center(child: text[position]),
+                child:Center(child: pages[position]),
               );
             }),
         bottomNavigationBar: SafeArea(
@@ -129,9 +130,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ],
                 selectedIndex: _index,
                 onTabChange: (index){
+                  if(this.mounted){
                   setState(() {
                     _index =index;
-                  });
+                  });}
                   controller.jumpToPage(index);
                 },
               ),

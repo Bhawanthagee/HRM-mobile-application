@@ -1,6 +1,7 @@
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:login_ui/login.dart';
+import 'package:animated_splash_screen/animated_splash_screen.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
@@ -14,13 +15,21 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'flutter demo',
+      title: 'Final Project',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
 
 
-      home: Login(),
+      home:AnimatedSplashScreen(
+        splash: Image.asset('assets/images/CERTLogo.png'),
+        nextScreen: Login(),
+        splashTransition: SplashTransition.scaleTransition,
+        duration: 1000,
+
+
+      ),
+
       debugShowCheckedModeBanner: false,
     );
   }

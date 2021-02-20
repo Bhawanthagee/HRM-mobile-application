@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:login_ui/leaveSubScreens/casualLeavesSubmission.dart';
 import 'package:login_ui/leaveSubScreens/dutyLeave.dart';
 import 'package:login_ui/leaveSubScreens/medicalLeave.dart';
-
+import 'package:login_ui/leave_events/halfDay.dart';
 import 'package:login_ui/leave_events/short_Leave_event.dart';
 import 'package:percent_indicator/circular_percent_indicator.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
@@ -29,9 +29,11 @@ class _LeaveRequestState extends State<LeaveRequest> {
     super.initState();
 
     getCurrentUser();
-    setState(() {
-      remainingLeaveCounter();
-    });
+    if (mounted) {
+      setState(() {
+        remainingLeaveCounter();
+      });
+    }
   }
   void getCurrentUser()async{
     try{
@@ -51,7 +53,11 @@ class _LeaveRequestState extends State<LeaveRequest> {
       String v = variable['remaining leaves'].toString();
       remainingLeaveCount = double.parse(v);
       percentage = remainingLeaveCount/4*.1;
-      setState(() { });
+      if (mounted) {
+        setState(() {
+          // Your state change code goes here
+        });
+      }
 
       print( percentage);
     }
@@ -72,7 +78,11 @@ class _LeaveRequestState extends State<LeaveRequest> {
         String v = variable['remaining leaves'].toString();
         remainingLeaveCount = double.parse(v);
         percentage = remainingLeaveCount/4*.1;
-        setState(() { });
+        if (mounted) {
+          setState(() {
+            // Your state change code goes here
+          });
+        }
 
         print( percentage);
       }
@@ -210,7 +220,7 @@ class _LeaveRequestState extends State<LeaveRequest> {
                                      onTap: (){
                                        showDialog(context: context,
                                            builder: (BuildContext context){
-                                             return SimpleDialog();
+                                             return HalfDayEvent();
                                            });
                                      },
                                      child: ReUsableCardLRP(
