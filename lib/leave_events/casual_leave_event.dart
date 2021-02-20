@@ -144,7 +144,8 @@ class _CasualLeaveEventState extends State<CasualLeaveEvent> {
 
                         if( _formKey.currentState.validate()){
                           DateTime date = widget.selectedDate;
-                          String formattedDateIn = DateFormat(' dd-M-yyyy').format(date);
+                          String formattedDateIn = DateFormat('dd-M-yyyy').format(date);
+                          String formattedTime = DateFormat('hh:mm ').format(date);
                           print(date);
                         try{
                           _fireStore.collection('leaves').doc('casual').collection(loggedInUSer.email).doc().set({

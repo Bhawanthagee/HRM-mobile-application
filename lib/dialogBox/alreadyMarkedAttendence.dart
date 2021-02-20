@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-
-class AlreadyChecked extends StatelessWidget {
-  final title;
-  AlreadyChecked(this.title);
+class AttendenceCheckIn extends StatelessWidget {
+  final String title;
+  AttendenceCheckIn({@required this.title});
 
   @override
   Widget build(BuildContext context) {
@@ -24,16 +23,16 @@ class AlreadyChecked extends StatelessWidget {
                 padding: const EdgeInsets.fromLTRB(10, 70, 10, 10),
                 child: Column(
                   children: [
-                    Text('OOOPS!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 25, color: Colors.red),),
+                    Text('OOOPS!', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16, color: Colors.redAccent),),
                     SizedBox(height: 20,),
-                    Text('"$title"', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15),),
+                    Text('$title', style: TextStyle(fontWeight: FontWeight.w400, fontSize: 15),),
 
                     SizedBox(height: 15,),
                     RaisedButton(onPressed: () {
                       Navigator.pop(context);
                       print(timeNow);
                     },
-                      color: Colors.blue,
+                      color: Colors.blueAccent,
                       child: Text('Ok', style: TextStyle(color: Colors.white),),
                     ),
 
@@ -55,3 +54,5 @@ class AlreadyChecked extends StatelessWidget {
     );
   }
 }
+
+

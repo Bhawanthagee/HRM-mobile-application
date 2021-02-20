@@ -31,6 +31,7 @@ class Attendance extends StatelessWidget {
                     SizedBox(height: 15,),
                     RaisedButton(onPressed: () {
                       Navigator.pop(context);
+
                       print(timeNow);
                     },
                       color: Colors.green,

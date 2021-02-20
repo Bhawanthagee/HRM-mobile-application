@@ -1,4 +1,4 @@
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 User loggedInUSer;
@@ -10,7 +10,7 @@ class DutyLeave extends StatefulWidget {
 
 class _DutyLeaveState extends State<DutyLeave> {
 
-  var _fireStore = FirebaseFirestore.instance;
+
   int status;
 
   void remainingLeaveCounter()async{
