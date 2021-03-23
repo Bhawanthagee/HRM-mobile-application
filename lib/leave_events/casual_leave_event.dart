@@ -1,6 +1,6 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_form_builder/flutter_form_builder.dart';
+
 import 'package:intl/intl.dart';
 import 'package:login_ui/screans/googleNav.dart';
 import 'package:login_ui/screans/home.dart';
@@ -124,17 +124,17 @@ class _CasualLeaveEventState extends State<CasualLeaveEvent> {
                  thickness: 1,
                  color: Colors.black45  ,),
 
-                 FormBuilderDateTimePicker(
-                   style: TextStyle(fontWeight: FontWeight.bold),
-                   name: 'date',
-                   initialValue: widget.selectedDate?? DateTime.now(),
-                   inputType: InputType.date ,
-                   format: DateFormat.yMMMMEEEEd(),
-                   decoration: InputDecoration(
-                     border: InputBorder.none,
-                     prefixIcon: Icon(Icons.calendar_today_outlined, color: Colors.blue,)
-                   ),
-                 ),
+                 // FormBuilderDateTimePicker(
+                 //   style: TextStyle(fontWeight: FontWeight.bold),
+                 //   name: 'date',
+                 //   initialValue: widget.selectedDate?? DateTime.now(),
+                 //   inputType: InputType.date ,
+                 //   format: DateFormat.yMMMMEEEEd(),
+                 //   decoration: InputDecoration(
+                 //     border: InputBorder.none,
+                 //     prefixIcon: Icon(Icons.calendar_today_outlined, color: Colors.blue,)
+                 //   ),
+                 // ),
                   SizedBox(height: 50,),
                   Container(
                        height: 50,
@@ -145,7 +145,7 @@ class _CasualLeaveEventState extends State<CasualLeaveEvent> {
                         if( _formKey.currentState.validate()){
                           DateTime date = widget.selectedDate;
                           String formattedDateIn = DateFormat('dd-M-yyyy').format(date);
-                          String formattedTime = DateFormat('hh:mm ').format(date);
+                          //String formattedTime = DateFormat('hh:mm ').format(date);
                           print(date);
                         try{
                           _fireStore.collection('leaves').doc('casual').collection(loggedInUSer.email).doc().set({
@@ -154,7 +154,6 @@ class _CasualLeaveEventState extends State<CasualLeaveEvent> {
                             'date' :formattedDateIn
                           });
                           DocumentSnapshot variable = await _fireStore.collection('Leave counter').doc(loggedInUSer.email).get();
-
                           String v = variable['remaining leaves'].toString();
                           var l = int.parse(v);
                           l=l-1;

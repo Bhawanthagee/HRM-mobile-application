@@ -11,14 +11,14 @@ import 'package:login_ui/dialogBox/attendece.dart';
 
 import 'package:login_ui/screans/home.dart';
 
-class LateAttShortLeaveType extends StatefulWidget {
+class EarlyCheckOutSL extends StatefulWidget {
   @override
-  _LateAttShortLeaveTypeState createState() => _LateAttShortLeaveTypeState();
+  _EarlyCheckOutSLState createState() => _EarlyCheckOutSLState();
 }
 
-class _LateAttShortLeaveTypeState extends State<LateAttShortLeaveType> {
+class _EarlyCheckOutSLState extends State<EarlyCheckOutSL> {
   final _fireStore = FirebaseFirestore.instance;
-  String descriptionTxt, formattedTimeIn, formattedDateIn;
+  String descriptionTxt, formattedTimeOut, formattedDateIn;
   Address _address;
   DateTime timeNow = DateTime.now();
   int shortLeave;
@@ -40,6 +40,11 @@ class _LateAttShortLeaveTypeState extends State<LateAttShortLeaveType> {
     });
 
   }
+  String SLCal(){
+    shortLeave = shortLeave-1;
+    String sL = shortLeave.toString();
+    return sL;
+  }
 
   final _formKey = GlobalKey<FormState>();
   StreamSubscription<Position> _streamSubscription;
@@ -50,19 +55,19 @@ class _LateAttShortLeaveTypeState extends State<LateAttShortLeaveType> {
     reductionShortLeave();
     _streamSubscription =
         Geolocator.getPositionStream().listen((Position position) {
-      if (mounted)
-        setState(() {
-          final coordinates =
+          if (mounted)
+            setState(() {
+              final coordinates =
               Coordinates(position.latitude, position.longitude);
-          convertCoordinatesToAddress(coordinates)
-              .then((value) => _address = value);
+              convertCoordinatesToAddress(coordinates)
+                  .then((value) => _address = value);
+            });
         });
-    });
   }
 
   Future<Address> convertCoordinatesToAddress(Coordinates coordinates) async {
     var addresses =
-        await Geocoder.local.findAddressesFromCoordinates(coordinates);
+    await Geocoder.local.findAddressesFromCoordinates(coordinates);
     return addresses.first;
   }
 
@@ -72,7 +77,7 @@ class _LateAttShortLeaveTypeState extends State<LateAttShortLeaveType> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Late Attendance (Short Leave)'),
+        title: Text('Early Leave (Short Leave)'),
       ),
       body: SafeArea(
         child: SingleChildScrollView(
@@ -89,7 +94,7 @@ class _LateAttShortLeaveTypeState extends State<LateAttShortLeaveType> {
               ),
               Container(
                 child: Text(
-                    'You are late to the work\nyour attendance has been marked\nbut one of your short leave has been deducted',
+                    'You are checking out early\nyour checkOut has been marked\nbut one of your short leave has been deducted',
                     textAlign: TextAlign.center),
               ),
               Container(
@@ -98,35 +103,35 @@ class _LateAttShortLeaveTypeState extends State<LateAttShortLeaveType> {
                   children: [
                     Expanded(
                         child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                          style: TextStyle(color: Colors.black, fontSize: 25.0),
-                          children: [
-                            TextSpan(
-                              text: 'Time\n',
-                            ),
-                            TextSpan(
-                                text: '${timeNow.hour}:${timeNow.minute} ',
-                                style: TextStyle(
-                                    color: Colors.black45, fontSize: 18.0))
-                          ]),
-                    )),
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                              style: TextStyle(color: Colors.black, fontSize: 25.0),
+                              children: [
+                                TextSpan(
+                                  text: 'Time\n',
+                                ),
+                                TextSpan(
+                                    text: '${timeNow.hour}:${timeNow.minute} ',
+                                    style: TextStyle(
+                                        color: Colors.black45, fontSize: 18.0))
+                              ]),
+                        )),
                     Expanded(
                         child: RichText(
-                      textAlign: TextAlign.center,
-                      text: TextSpan(
-                          style: TextStyle(color: Colors.black, fontSize: 25.0),
-                          children: [
-                            TextSpan(
-                              text: 'Date\n',
-                            ),
-                            TextSpan(
-                                text:
+                          textAlign: TextAlign.center,
+                          text: TextSpan(
+                              style: TextStyle(color: Colors.black, fontSize: 25.0),
+                              children: [
+                                TextSpan(
+                                  text: 'Date\n',
+                                ),
+                                TextSpan(
+                                    text:
                                     '${timeNow.year} / ${timeNow.month} / ${timeNow.day}',
-                                style: TextStyle(
-                                    color: Colors.black45, fontSize: 18.0))
-                          ]),
-                    )),
+                                    style: TextStyle(
+                                        color: Colors.black45, fontSize: 18.0))
+                              ]),
+                        )),
                     // Expanded(
                     //     child: Text('Time',textAlign: TextAlign.center)
                     // ),
@@ -152,7 +157,7 @@ class _LateAttShortLeaveTypeState extends State<LateAttShortLeaveType> {
                           labelText: "Please Enter The Reason For The Delay",
                           helperText: "",
                           labelStyle:
-                              TextStyle(fontSize: 14, color: Colors.black),
+                          TextStyle(fontSize: 14, color: Colors.black),
                           enabledBorder: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10),
                             borderSide: BorderSide(
@@ -173,21 +178,21 @@ class _LateAttShortLeaveTypeState extends State<LateAttShortLeaveType> {
                 width: double.infinity,
                 child: FlatButton(
                   onPressed: () async {
-                   //currentHalfDayOrShortLeave();
+                    //currentHalfDayOrShortLeave();
                     if (_formKey.currentState.validate()) {
                       DateTime date = timeNow;
-                      String formattedDateIn = DateFormat('dd-M-yyyy').format(date);
+                      String formattedDateOut = DateFormat('dd-M-yyyy').format(date);
                       String formattedTime = DateFormat('hh:mm ').format(date);
                       print(date);
                       // Navigator.pop(context);
-                      print(formattedDateIn);
+                      print(formattedDateOut);
                       print(formattedTime);
 
                       DateTime time = DateTime.now();
 
-                      formattedDateIn = DateFormat('dd-M-yyyy').format(time);
-                      formattedDateIn='"$formattedDateIn"';
-                      formattedTimeIn = DateFormat('kk:mm').format(time);
+                      formattedDateOut = DateFormat('dd-M-yyyy').format(time);
+                      formattedDateOut='"$formattedDateOut"';
+                      formattedTimeOut = DateFormat('kk:mm').format(time);
                       try {
                         if(shortLeave==0){
                           showDialog(
@@ -197,59 +202,54 @@ class _LateAttShortLeaveTypeState extends State<LateAttShortLeaveType> {
                               });
                         }else {
                           DocumentSnapshot variable =
-                          await _fireStore.collection('in').doc(loggedInUSer.email).get();
-                          String v = variable['inStat'];
+                          await _fireStore.collection('out').doc(loggedInUSer.email).get();
+                          String v = variable['outStat'];
                           int stat = int.parse(v);
                           if(stat!=1){
-                          _fireStore
-                              .collection('leaves')
-                              .doc('short leave')
-                              .collection(loggedInUSer.email)
-                              .doc()
-                              .set({
-                            'date': formattedDateIn,
-                            'time': formattedTime,
-                            'Description': descriptionTxt,
-                          });
-                          _fireStore
-                              .collection("attendance")
-                              .doc("$formattedDateIn")
-                              .collection(loggedInUSer.email)
-                              .doc('check in')
-                              .set({
-                            'check in time': formattedTimeIn,
-                            'check in Location':
-                            '${_address?.addressLine ?? '-'}',
-                            'Attendance type': 'Short Leave(Late Attendance)'
-                            //'stat':1
-                          });
-                          _fireStore.collection('short leave Counter').doc(loggedInUSer.email).set(
-                              {
-                              'count' : '${shortLeave-1}'
-                              });
+                            _fireStore.collection('leaves').doc('short leave').collection(loggedInUSer.email).doc().set({
+                              'date': formattedDateOut,
+                              'time': formattedTime,
+                              'Description': descriptionTxt,
+                            });
+                            _fireStore
+                                .collection("attendance")
+                                .doc("$formattedDateOut")
+                                .collection(loggedInUSer.email)
+                                .doc('check out')
+                                .set({
+                              'check out time': formattedTimeOut,
+                              'check out Location':
+                              '${_address?.addressLine ?? '-'}',
+                              'Attendance type': 'Short Leave(Early check Out)'
+                              //'stat':1
+                            });
+                            _fireStore.collection('short leave Counter').doc(loggedInUSer.email).set(
+                                {
+                                  'count' : SLCal()//todo need to update firebase properly not working because its uploading int must upload String
+                                });
 
-                          _fireStore
-                              .collection('in')
-                              .doc(loggedInUSer.email)
-                              .set({
-                            'inStat': '1',
-                          });
-                          showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return Attendance('checked in Successfully');
-                              });
-                        }else{
+                            _fireStore
+                                .collection('out')
+                                .doc(loggedInUSer.email)
+                                .set({
+                              'outStat': '0',
+                            });
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return AttendenceCheckIn(title: 'Already check In');
+                                  return Attendance('checked out Successfully');
+                                });
+                          }else{
+                            showDialog(
+                                context: context,
+                                builder: (BuildContext context) {
+                                  return AttendenceCheckIn(title: 'Already check out');
                                 });
                           }
                         }
-                      } catch (e) {}
+                      } catch (e) {  print(e);}
 
-                      print(timeNow);
+
                     }
 
                   },

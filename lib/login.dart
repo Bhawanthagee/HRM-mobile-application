@@ -141,16 +141,10 @@ class _LoginState extends State<Login> {
                                 });}
 
                                 try {
-                                  final user =
-                                  await _auth.signInWithEmailAndPassword(
-                                      email: email, password: password);
+                                  final user =await _auth.signInWithEmailAndPassword(email: email, password: password);
                                   if (user != null) {
                                     Navigator.pop(context);
-                                    Navigator.push(
-                                        context,
-                                        MaterialPageRoute(
-                                            builder: (context) =>
-                                                MyHomePage()));
+                                    Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()));
                                     //Navigator.pop(context);
                                   }
                                   if(this.mounted){
@@ -180,15 +174,6 @@ class _LoginState extends State<Login> {
                                    });
                                    }
                                  }
-                                 // else if(e.code == 'invalid-email'){
-                                 //   showDialog(context: context,
-                                 //       builder: (BuildContext context){
-                                 //         return LoginErrorDialogPassword();
-                                 //       });
-                                 //   setState(() {
-                                 //     showSpinner = false;
-                                 //   });
-                                 // }
                                 }
                               }
                             },

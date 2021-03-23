@@ -8,8 +8,12 @@ import 'package:geolocator/geolocator.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:login_ui/dialogBox/alreadyMarkedAttendence.dart';
 import 'package:login_ui/dialogBox/attendece.dart';
-import 'package:login_ui/dialogBox/lateCheckIn.dart';
+import 'package:login_ui/late%20check%20in%20and%20out/early_check_out_halfday.dart';
+import 'package:login_ui/late%20check%20in%20and%20out/earlycheckout.dart';
+
+import 'package:login_ui/late%20check%20in%20and%20out/lateAttHalfDay.dart';
 import 'package:login_ui/late%20check%20in%20and%20out/lateAttShortLeave.dart';
+
 
 User loggedInUSer;
 
@@ -32,7 +36,12 @@ class _HomeState extends State<Home> {
     }
   }
 
+
+
+
+
   var textMsg;
+  int leaveStatus;
 
   // int attStatus,attStatus1;
   int buttonValue;
@@ -42,7 +51,10 @@ class _HomeState extends State<Home> {
   final _auth = FirebaseAuth.instance;
   final _fireStore = FirebaseFirestore.instance;
   User currentUSerEmail;
-  String inLocation, outLocation, addressOk, inTime, outTime, formattedDateIn, formattedDateOut,
+  String inLocation, outLocation,
+      addressOk, inTime,
+      outTime, formattedDateIn,
+      formattedDateOut,
       formattedTimeIn,
       formattedTimeIn2,
       formattedTimeOut,
@@ -52,11 +64,19 @@ class _HomeState extends State<Home> {
 
   StreamSubscription<Position> _streamSubscription;
   final dbRef = FirebaseDatabase.instance.reference();
+  void calLeave()async{
+    DocumentSnapshot variable = await _fireStore.collection('already_got_HD_or_SL').doc(loggedInUSer.email).get();
+    String v = variable['stat'].toString();
+    leaveStatus = int.parse(v);
+    //remainingLeave = double.parse(v);
+    //print('remaining leave $remainingLeave' );
+  }
 
   @override
   void initState() {
     super.initState();
     getCurrentUser();
+    calLeave();
     attStatus();
     _streamSubscription =
         Geolocator.getPositionStream().listen((Position position) {
@@ -106,7 +126,7 @@ class _HomeState extends State<Home> {
   }
 
 // method that responsible for check in process
-  void checkInWriteData() async {
+  void checkInWriteData() async  {
     try {
       int i = int.parse(formattedTimeIn2);
       DocumentSnapshot variable =
@@ -117,7 +137,7 @@ class _HomeState extends State<Home> {
 
       if (stat != 1) { //check in weather user also check in or not
         if (i <830) {//its 8:30 am. check employee late or not
-          _fireStore.collection("attendance").doc(formattedDateIn).collection(loggedInUSer.email)
+          _fireStore.collection("attendance").doc("$formattedDateIn").collection(loggedInUSer.email)
               .doc('check in')
               .set({
             'check in time': formattedTimeIn,
@@ -135,12 +155,22 @@ class _HomeState extends State<Home> {
           _fireStore.collection('in').doc(loggedInUSer.email).set({
             'inStat': '1',
           });
-        } else {
-          print('you r late');
+        } else if(i<930){
+          print('you r late this will be a short leave');
           showDialog(
               context: context,
               builder: (BuildContext context) {
                 return LateAttShortLeaveType();
+              });
+        }else if(i<1030){
+//LateAttHalfDayLeaveType
+          Navigator.push(context,MaterialPageRoute(builder:
+              (context)=>LateAttHalfDayLeaveType()));
+        }else{
+          showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AttendenceCheckIn(title: 'U can not Mark Attendance');
               });
         }
       } else {
@@ -153,63 +183,146 @@ class _HomeState extends State<Home> {
     } catch (e) {}
   }
 // method that responsible for check out process
-  void checkOutWriteData() async {
-    try {
-      int i = int.parse(formattedTimeOut2);//converting date in to int value
-      if (i < 1630) {// this is off time 16:30 = 4:30 pm
-        print('you are too early');
-      } else {
-        print('ok');
-      }
-    //getting value from firebase 0 or 1. if 0 means not check in 1 means checked out
-      DocumentSnapshot variable =
-          await _fireStore.collection('out').doc(loggedInUSer.email).get();
-      String v = variable['outStat'];
-      int stat = int.parse(v);
-      print(stat);
+//   void checkOutWriteData1() async {
+//     DocumentSnapshot variable =
+//     await _fireStore.collection('out').doc(loggedInUSer.email).get();
+//     String v = variable['outStat'];
+//     int stat = int.parse(v);
+//
+//     if(stat ==1){
+//       showDialog(
+//           context: context,
+//           builder: (BuildContext context) {
+//             return AttendenceCheckIn(title: 'Already check out');
+//           });
+//     }else{
+//       try {
+//         int i = int.parse(formattedTimeOut2);//converting time in to int value
+//         if(leaveStatus==1){
+//           showDialog(
+//               context: context,
+//               builder: (BuildContext context) {
+//                 return AttendenceCheckIn(title: 'You are already got a short/half day leave');
+//               });
+//         }else if(i<1630){
+//           showDialog(
+//               context: context,
+//               builder: (BuildContext context) {
+//                 return EarlyCheckOutSL();
+//               });
+//         }
+//         else{
+//           DocumentSnapshot variable =
+//           await _fireStore.collection('out').doc(loggedInUSer.email).get();
+//           String v = variable['outStat'];
+//           int stat = int.parse(v);
+//           print(stat);
+//
+// // in here i get get check in value. so i can check if user must check in first or not
+//           DocumentSnapshot variable2 =
+//           await _fireStore.collection('in').doc(loggedInUSer.email).get();
+//           String v2 = variable2['inStat'];
+//           int stat2 = int.parse(v2);
+//           print('check in status: $stat2');
+//
+//           if (stat2 == 0) {//check whether user already check in or not
+//             showDialog(
+//                 context: context,
+//                 builder: (BuildContext context) {
+//                   return AttendenceCheckIn(title: 'You must checked in first');
+//                 });
+//           } else {
+//             if (stat != 1) {//if he checked in update checkout field of firebase
+//               _fireStore.collection("attendance").doc("$formattedDateOut").collection(loggedInUSer.email).doc('check out').set({
+//                 'check in time': formattedTimeOut,
+//                 'check out Location': '${_address?.addressLine ?? '-'}',
+//                 // 'stat':1
+//               });
+//               showDialog(
+//                   context: context,
+//                   builder: (BuildContext context) {
+//                     return Attendance('checked out Successfully');
+//                   });
+//               _fireStore.collection('out').doc(loggedInUSer.email).set({
+//                 'outStat': '1',
+//               });
+//             } else {
+//               showDialog(
+//                   context: context,
+//                   builder: (BuildContext context) {
+//                     return AttendenceCheckIn(title: 'Already check out');
+//                   });
+//             }
+//           }
+//         }
+//         //getting value from firebase 0 or 1. if 0 means not check in 1 means checked out
+//
+//       } catch (e) {}
+//     }
+//   }
+  void checkOutWriteData()async{
 
-      // in here i get get check in value. so i can check if user must check in first or not
-      DocumentSnapshot variable2 =
-          await _fireStore.collection('in').doc(loggedInUSer.email).get();
-      String v2 = variable2['inStat'];
-      int stat2 = int.parse(v2);
-      print('check in status: $stat2');
+    int i = int.parse(formattedTimeOut2);// converting date in to int so i can check time easily
 
-      if (stat2 == 0) {//check whether user already check in or not
+    DocumentSnapshot variable2 =
+    await _fireStore.collection('in').doc(loggedInUSer.email).get();
+    String v2 = variable2['inStat'];
+    int stat2 = int.parse(v2);
+    print('check in status: $stat2');
+
+    DocumentSnapshot variable =
+    await _fireStore.collection('out').doc(loggedInUSer.email).get();
+    String v = variable['outStat'];
+    int stat = int.parse(v);
+    print(stat);
+
+    if (stat2 == 0) {//check whether user already check in or not
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AttendenceCheckIn(title: 'You must checked in first');
+          });
+    }else if(stat==1){//checking user already check out or not
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AttendenceCheckIn(title: 'You have already check out');
+          });
+    }else if(leaveStatus==1){// checking user already got a half day or not
+      showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AttendenceCheckIn(title: 'You are already got a short/half day leave');
+          });
+    }else {
+      if(i>1130 && i<1530){
+        Navigator.push(context, MaterialPageRoute(builder: (context) => EarlyCheckOutHD()));
+        print('This is a half day');
+      }else if(i<1630){
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return AttendenceCheckIn(title: 'You must checked in first');
+              return EarlyCheckOutSL();
             });
-      } else {
-        if (stat != 1) {//if he checked in update checkout field of firebase
-          _fireStore
-              .collection("attendance")
-              .doc(formattedDateOut)
-              .collection(loggedInUSer.email)
-              .doc('check out')
-              .set({
-            'check in time': formattedTimeOut,
-            'check out Location': '${_address?.addressLine ?? '-'}',
-            // 'stat':1
-          });
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return Attendance('checked out Successfully');
-              });
-          _fireStore.collection('out').doc(loggedInUSer.email).set({
-            'outStat': '1',
-          });
-        } else {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) {
-                return AttendenceCheckIn(title: 'Already check out');
-              });
-        }
+      }else{//if user check out right time. following will happen
+        _fireStore.collection("attendance").doc("$formattedDateOut").collection(loggedInUSer.email).doc('check out').set({
+          'check in time': formattedTimeOut,
+          'check out Location': '${_address?.addressLine ?? '-'}',
+          // 'stat':1
+        });
+        _fireStore.collection('already_got_HD_or_SL').doc(loggedInUSer.email).set({
+          'stat': '0',
+        });
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return Attendance('checked out Successfully');
+            });
+        _fireStore.collection('out').doc(loggedInUSer.email).set({
+          'outStat': '1',
+        });
       }
-    } catch (e) {}
+    }
   }
 
 //TODO create a method to get firebase value
@@ -221,6 +334,7 @@ class _HomeState extends State<Home> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
+
       body: SingleChildScrollView(
         child: SafeArea(
           child: Container(
@@ -286,6 +400,7 @@ class _HomeState extends State<Home> {
                                 DateTime time = DateTime.now();
                                 timeNow = time;
                                 formattedDateIn = DateFormat('dd-M-yyyy').format(timeNow);
+                                formattedDateIn ='"$formattedDateIn';
                                 formattedTimeIn =
                                     DateFormat('kk:mm').format(timeNow);
                                 formattedTimeIn2 =
@@ -308,6 +423,7 @@ class _HomeState extends State<Home> {
                                 timeNow = time;
                                 formattedDateOut =
                                     DateFormat('dd-M-yyyy').format(timeNow);
+                                formattedDateOut = '"$formattedDateOut"';
                                 formattedTimeOut =
                                     DateFormat('kk:mm').format(timeNow);
                                 formattedTimeOut2 =
