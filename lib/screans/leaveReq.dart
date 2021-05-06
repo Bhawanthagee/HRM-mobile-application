@@ -49,8 +49,8 @@ class _LeaveRequestState extends State<LeaveRequest> {
   }
   void remainingLeaveCounter()async{
     try{
-      DocumentSnapshot variable = await _fireStore.collection('Leave counter').doc(loggedInUSer.email).get();
-      String v = variable['remaining leaves'].toString();
+      DocumentSnapshot variable = await _fireStore.collection('leave_counter').doc(loggedInUSer.email).get();
+      String v = variable['r_leave'].toString();
       remainingLeaveCount = double.parse(v);
       percentage = remainingLeaveCount/4*.1;
       if (mounted) {
@@ -74,8 +74,8 @@ class _LeaveRequestState extends State<LeaveRequest> {
 
     void remainingLeaveCounter()async{
       try{
-        DocumentSnapshot variable = await _fireStore.collection('Leave counter').doc(loggedInUSer.email).get();
-        String v = variable['remaining leaves'].toString();
+        DocumentSnapshot variable = await _fireStore.collection('leave_counter').doc(loggedInUSer.email).get();
+        String v = variable['r_leave'].toString();
         remainingLeaveCount = double.parse(v);
         percentage = remainingLeaveCount/4*.1;
         if (mounted) {
@@ -177,7 +177,7 @@ class _LeaveRequestState extends State<LeaveRequest> {
                                  Expanded(
                                    child: GestureDetector(
                                      onTap: (){
-                                       Navigator.push(context,MaterialPageRoute(builder:(context)=>MedicalLeavesRequest()));
+                                       Navigator.push(context,MaterialPageRoute(builder:(context)=>MedicalLeaveReq()));
                                      },
                                      child: ReUsableCardLRP(
                                          colourFromAbove:Colors.blue.shade100,

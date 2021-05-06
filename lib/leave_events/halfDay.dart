@@ -9,6 +9,7 @@ import 'package:login_ui/screans/googleNav.dart';
 
 
 
+
 class HalfDayEvent extends StatelessWidget {
 
   @override
@@ -46,18 +47,20 @@ class HalfDayEvent extends StatelessWidget {
                       print(formattedTime);
 
                       try{
-                        _fireStore.collection('leaves').doc('Half Day').collection(loggedInUSer.email).doc().set({
+                        _fireStore.collection('Half_Day').doc().set({
+                          'email' : loggedInUSer.email,
                           'date' :formattedDateIn,
                           'time' :formattedTime,
                         });
-                        DocumentSnapshot variable = await _fireStore.collection('Leave counter').doc(loggedInUSer.email).get();
-
-                        String v = variable['remaining leaves'].toString();
-                        var l = double.parse(v);
-                        l=l-0.5;
-                        _fireStore.collection('Leave counter').doc(loggedInUSer.email).set({
-                          "remaining leaves" : l
+                        DocumentSnapshot variable = await _fireStore.collection('leave_counter').doc(loggedInUSer.email).get();
+                        double l = variable['r_leave'];
+                        //var l = int.parse(v);
+                        double v = l.toDouble();
+                        v=l-0.5;
+                        _fireStore.collection('leave_counter').doc(loggedInUSer.email).set({
+                          "r_leave" : v
                         });
+                        //print('deduction : $v');
                       }catch(e){
 
                       }

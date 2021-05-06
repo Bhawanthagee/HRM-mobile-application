@@ -33,9 +33,7 @@ class _CasualLeaveListPageState extends State<CasualLeaveListPage> {
             itemCount: snapshot.data.docs.length,
             itemBuilder: (context, index) {
               DocumentSnapshot data = snapshot.data.docs[index];
-
               return LeaveItems(
-
                 documentSnapshot: data,
                 date: data['date'],
                 reason:data['reason'],

@@ -7,7 +7,7 @@ import 'package:geocoder/model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:login_ui/dialogBox/alreadyMarkedAttendence.dart';
-import 'package:login_ui/dialogBox/attendece.dart';
+import 'package:login_ui/dialogBox/doneDialogBox.dart';
 
 import 'package:login_ui/screans/home.dart';
 
@@ -202,25 +202,19 @@ class _LateAttShortLeaveTypeState extends State<LateAttShortLeaveType> {
                           int stat = int.parse(v);
                           if(stat!=1){
                           _fireStore
-                              .collection('leaves')
-                              .doc('short leave')
-                              .collection(loggedInUSer.email)
-                              .doc()
-                              .set({
+                              .collection('short_leave').doc().set({
+                            'email':loggedInUSer.email,
                             'date': formattedDateIn,
                             'time': formattedTime,
-                            'Description': descriptionTxt,
+                            'description': descriptionTxt,
                           });
                           _fireStore
-                              .collection("attendance")
-                              .doc("$formattedDateIn")
-                              .collection(loggedInUSer.email)
-                              .doc('check in')
-                              .set({
-                            'check in time': formattedTimeIn,
-                            'check in Location':
+                              .collection('check_in').doc('').set({
+                            'email':loggedInUSer.email,
+                            'check_in_time': formattedTimeIn,
+                            'check_in_location':
                             '${_address?.addressLine ?? '-'}',
-                            'Attendance type': 'Short Leave(Late Attendance)'
+                            'attendance_type': 'Short Leave(Late Attendance)'
                             //'stat':1
                           });
                           _fireStore.collection('short leave Counter').doc(loggedInUSer.email).set(
@@ -237,7 +231,7 @@ class _LateAttShortLeaveTypeState extends State<LateAttShortLeaveType> {
                           showDialog(
                               context: context,
                               builder: (BuildContext context) {
-                                return Attendance('checked in Successfully');
+                                return DoneDialogBox('checked in Successfully');
                               });
                         }else{
                             showDialog(

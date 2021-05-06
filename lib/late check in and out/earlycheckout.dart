@@ -7,7 +7,7 @@ import 'package:geocoder/model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:login_ui/dialogBox/alreadyMarkedAttendence.dart';
-import 'package:login_ui/dialogBox/attendece.dart';
+import 'package:login_ui/dialogBox/doneDialogBox.dart';
 
 import 'package:login_ui/screans/home.dart';
 
@@ -206,21 +206,18 @@ class _EarlyCheckOutSLState extends State<EarlyCheckOutSL> {
                           String v = variable['outStat'];
                           int stat = int.parse(v);
                           if(stat!=1){
-                            _fireStore.collection('leaves').doc('short leave').collection(loggedInUSer.email).doc().set({
+                            _fireStore.collection('short_leave').doc().set({
+                              'email':loggedInUSer.email,
                               'date': formattedDateOut,
                               'time': formattedTime,
-                              'Description': descriptionTxt,
+                              'description': descriptionTxt,
                             });
-                            _fireStore
-                                .collection("attendance")
-                                .doc("$formattedDateOut")
-                                .collection(loggedInUSer.email)
-                                .doc('check out')
-                                .set({
-                              'check out time': formattedTimeOut,
-                              'check out Location':
+                            _fireStore.collection("check_out").doc().set({
+                              'email':loggedInUSer.email,
+                              'check_out_time': formattedTimeOut,
+                              'check_out_location':
                               '${_address?.addressLine ?? '-'}',
-                              'Attendance type': 'Short Leave(Early check Out)'
+                              'Attendance_type': 'Short Leave (early check out)'
                               //'stat':1
                             });
                             _fireStore.collection('short leave Counter').doc(loggedInUSer.email).set(
@@ -237,7 +234,7 @@ class _EarlyCheckOutSLState extends State<EarlyCheckOutSL> {
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return Attendance('checked out Successfully');
+                                  return DoneDialogBox('checked out Successfully');
                                 });
                           }else{
                             showDialog(

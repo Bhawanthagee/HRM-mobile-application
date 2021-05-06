@@ -148,26 +148,24 @@ class _CasualLeaveEventState extends State<CasualLeaveEvent> {
                           //String formattedTime = DateFormat('hh:mm ').format(date);
                           print(date);
                         try{
-                          _fireStore.collection('leaves').doc('casual').collection(loggedInUSer.email).doc().set({
+                          _fireStore.collection('casual').doc().set({
+                            'email':loggedInUSer.email,
                             "description": descriptionTxt,
                             "reason" :reasonTxt,
                             'date' :formattedDateIn
                           });
-                          DocumentSnapshot variable = await _fireStore.collection('Leave counter').doc(loggedInUSer.email).get();
-                          String v = variable['remaining leaves'].toString();
-                          var l = int.parse(v);
+                          DocumentSnapshot variable = await _fireStore.collection('leave_counter').doc(loggedInUSer.email).get();
+                          int l = variable['r_leave'];
+                          //var l = int.parse(v);
                           l=l-1;
-                          _fireStore.collection('Leave counter').doc(loggedInUSer.email).set({
-                            "remaining leaves" : l
+                          _fireStore.collection('leave_counter').doc(loggedInUSer.email).set({
+                            "r_leave" : l
                           });
                           print('remaining leaves: $l');
                           Navigator.push(context,MaterialPageRoute(builder:(context)=>MyHomePage()));
 
                         }catch(e){}
-
-                      }
-
-
+                        }
                         },
 
 

@@ -7,7 +7,7 @@ import 'package:geocoder/geocoder.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:login_ui/dialogBox/alreadyMarkedAttendence.dart';
-import 'package:login_ui/dialogBox/attendece.dart';
+import 'package:login_ui/dialogBox/doneDialogBox.dart';
 import 'package:login_ui/late%20check%20in%20and%20out/early_check_out_halfday.dart';
 import 'package:login_ui/late%20check%20in%20and%20out/earlycheckout.dart';
 
@@ -71,6 +71,20 @@ class _HomeState extends State<Home> {
     //remainingLeave = double.parse(v);
     //print('remaining leave $remainingLeave' );
   }
+  refreshShortLeave(){
+    DateTime date = DateTime.now(); 
+    String refreshSLDate = DateFormat('dd').format(date);
+    int fDate = int.parse(refreshSLDate);
+    if(fDate==1){
+      _fireStore.collection('short leave Counter').doc(loggedInUSer.email).set({
+        'count' : '2'
+      });
+    }else{
+      print('Its not the beginning ogf the month bawantha');
+      print('Today is $fDate bawantha');
+    }
+
+  }
 
   @override
   void initState() {
@@ -78,6 +92,7 @@ class _HomeState extends State<Home> {
     getCurrentUser();
     calLeave();
     attStatus();
+    refreshShortLeave();
     _streamSubscription =
         Geolocator.getPositionStream().listen((Position position) {
       if (mounted)
@@ -137,11 +152,10 @@ class _HomeState extends State<Home> {
 
       if (stat != 1) { //check in weather user also check in or not
         if (i <830) {//its 8:30 am. check employee late or not
-          _fireStore.collection("attendance").doc("$formattedDateIn").collection(loggedInUSer.email)
-              .doc('check in')
-              .set({
-            'check in time': formattedTimeIn,
-            'check in Location': '${_address?.addressLine ?? '-'}',
+          _fireStore.collection("check_in").doc().set({
+            'email':loggedInUSer.email,
+            'check_in_time': formattedTimeIn,
+            'check_in_location': '${_address?.addressLine ?? '-'}',
             //'Attendance type': 'Regular'
             //'stat':1
           });
@@ -149,7 +163,7 @@ class _HomeState extends State<Home> {
           showDialog(
               context: context,
               builder: (BuildContext context) {
-                return Attendance('checked in Successfully');
+                return DoneDialogBox('checked in Successfully');
               });
 
           _fireStore.collection('in').doc(loggedInUSer.email).set({
@@ -295,7 +309,14 @@ class _HomeState extends State<Home> {
             return AttendenceCheckIn(title: 'You are already got a short/half day leave');
           });
     }else {
-      if(i>1130 && i<1530){
+      if(i<1130){
+        showDialog(
+            context: context,
+            builder: (BuildContext context) {
+              return AttendenceCheckIn(title: 'You cannot check out yet');
+            });
+      }
+      else if(i>1130 && i<1530){
         Navigator.push(context, MaterialPageRoute(builder: (context) => EarlyCheckOutHD()));
         print('This is a half day');
       }else if(i<1630){
@@ -305,9 +326,10 @@ class _HomeState extends State<Home> {
               return EarlyCheckOutSL();
             });
       }else{//if user check out right time. following will happen
-        _fireStore.collection("attendance").doc("$formattedDateOut").collection(loggedInUSer.email).doc('check out').set({
-          'check in time': formattedTimeOut,
-          'check out Location': '${_address?.addressLine ?? '-'}',
+        _fireStore.collection("check_out").doc().set({
+          'email': loggedInUSer.email,
+          'check_in_time': formattedTimeOut,
+          'check_out_location': '${_address?.addressLine ?? '-'}',
           // 'stat':1
         });
         _fireStore.collection('already_got_HD_or_SL').doc(loggedInUSer.email).set({
@@ -316,7 +338,7 @@ class _HomeState extends State<Home> {
         showDialog(
             context: context,
             builder: (BuildContext context) {
-              return Attendance('checked out Successfully');
+              return DoneDialogBox('checked out Successfully');
             });
         _fireStore.collection('out').doc(loggedInUSer.email).set({
           'outStat': '1',
@@ -364,6 +386,7 @@ class _HomeState extends State<Home> {
                             decoration: BoxDecoration(
                               image: DecorationImage(
                                 image: AssetImage('assets/images/checkIn.png'),
+
                               ),
                             ),
                           ),

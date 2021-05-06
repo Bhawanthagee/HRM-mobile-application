@@ -6,7 +6,7 @@ import 'package:geocoder/model.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:intl/intl.dart';
 import 'package:login_ui/dialogBox/alreadyMarkedAttendence.dart';
-import 'package:login_ui/dialogBox/attendece.dart';
+import 'package:login_ui/dialogBox/doneDialogBox.dart';
 import 'package:login_ui/screans/home.dart';
 
 class LateAttHalfDayLeaveType extends StatefulWidget {
@@ -21,19 +21,19 @@ class _LateAttHalfDayLeaveTypeState extends State<LateAttHalfDayLeaveType> {
   DateTime timeNow = DateTime.now();
   double remainingLeave;
 
+
   void calLeave()async{
-    DocumentSnapshot variable = await _fireStore.collection('Leave counter').doc(loggedInUSer.email).get();
-    String v = variable['remaining leaves'].toString();
-    remainingLeave = double.parse(v);
+    DocumentSnapshot variable = await _fireStore.collection('leave_counter').doc(loggedInUSer.email).get();
+    double l = variable['r_leave'];
+    remainingLeave = l.toDouble();
     //remainingLeave = double.parse(v);
-print('remaining leave $remainingLeave' );
+    print('remaining leave $remainingLeave' );
   }
   String calRL(){
     remainingLeave = remainingLeave - .5;
     String leave = remainingLeave.toString();
     return leave;
   }
-
 
   final _formKey = GlobalKey<FormState>();
   StreamSubscription<Position> _streamSubscription;
@@ -188,21 +188,23 @@ print('remaining leave $remainingLeave' );
                           String v = variable['inStat'];
                           int stat = int.parse(v);
                           if(stat!=1){
-                            _fireStore.collection('leaves').doc('Half Day').collection(loggedInUSer.email).doc().set({
+                            _fireStore.collection('Half_Day').doc().set({
+                              'email':loggedInUSer.email,
                               'date': formattedDateIn,
                               'time': formattedTime,
-                              'Description': descriptionTxt,
+                              'description': descriptionTxt,
                             });
-                            _fireStore.collection("attendance").doc("$formattedDateIn").collection(loggedInUSer.email).doc('check in').set({
-                              'check in time': formattedTimeIn,
-                              'check in Location':
+                            _fireStore.collection("check_in").doc().set({
+                              'email':loggedInUSer.email,
+                              'check_in_time': formattedTimeIn,
+                              'check_in_location':
                               '${_address?.addressLine ?? '-'}',
-                              'Attendance type': 'Half Day Leave(Late Attendance)'
+                              'attendance_type': 'Half Day Leave(Late Attendance)'
                               //'stat':1
                             });
-                            _fireStore.collection('Leave counter').doc(loggedInUSer.email).set(
+                            _fireStore.collection('leave_counter').doc(loggedInUSer.email).set(
                                 {
-                                  'remaining leaves' : calRL()
+                                  'r_leave' : calRL
                                 });
 
                             _fireStore.collection('in').doc(loggedInUSer.email).set({
@@ -214,7 +216,7 @@ print('remaining leave $remainingLeave' );
                             showDialog(
                                 context: context,
                                 builder: (BuildContext context) {
-                                  return Attendance('check in Successful');
+                                  return DoneDialogBox('check in Successful');
                                 });
                           }else{
                             showDialog(
