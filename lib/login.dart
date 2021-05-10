@@ -1,7 +1,9 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:login_ui/screans/googleNav.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:login_ui/screans/verifyAccount.dart';
 import 'package:modal_progress_hud/modal_progress_hud.dart';
 
 import 'dialogBox/errorDialog.dart';
@@ -12,6 +14,10 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+
+
+
+  FirebaseFirestore _fireStore = FirebaseFirestore.instance;
   final _auth = FirebaseAuth.instance;
   String email;
   String password;
@@ -135,6 +141,10 @@ class _LoginState extends State<Login> {
                           width: double.infinity,
                           child: FlatButton(
                             onPressed: () async {
+
+                              DocumentSnapshot status=await _fireStore.collection('users').doc(email).get();
+                              String stat = status['bio'];
+
                               if (_key.currentState.validate()) {
                                if(mounted){ setState(() {
                                   showSpinner = true;
@@ -143,8 +153,15 @@ class _LoginState extends State<Login> {
                                 try {
                                   final user =await _auth.signInWithEmailAndPassword(email: email, password: password);
                                   if (user != null) {
-                                    Navigator.pop(context);
-                                    Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()));
+
+                                    if(stat=='0'){
+                                      Navigator.pop(context);
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => VerifyAccount()));
+                                    }else{
+                                      Navigator.pop(context);
+                                      Navigator.push(context, MaterialPageRoute(builder: (context) => MyHomePage()));
+                                    }
+
                                     //Navigator.pop(context);
                                   }
                                   if(this.mounted){

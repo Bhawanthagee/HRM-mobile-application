@@ -1,10 +1,6 @@
-import 'dart:io';
-import 'dart:async';
 
-import 'package:ext_storage/ext_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_downloader/flutter_downloader.dart';
-import 'package:permission_handler/permission_handler.dart';
+
 
 class BankLoan extends StatefulWidget {
   @override

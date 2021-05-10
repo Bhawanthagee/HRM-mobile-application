@@ -317,10 +317,11 @@ class _MedicalLeaveReqState extends State<MedicalLeaveReq> {
 
                                });
 
+
                                DocumentSnapshot variable = await _fireStore.collection('leave_counter').doc(loggedInUSer.email).get();
-                               int l = variable['r_leave'];
+                               double l = variable['r_leave'];
                                //var l = int.parse(v);
-                               int value = int.parse(countA);
+                               double value = double.parse(countA);
                                l=l-value;
                                _fireStore.collection('leave_counter').doc(loggedInUSer.email).set({
                                  "r_leave" : l
